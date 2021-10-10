@@ -16,36 +16,28 @@ import Logout from './components/login/logout';
 import TimePicker from './components/timepicker/TimePicker';
 import { Item } from './components/login/logout';
 
-
-
 function App() {
-  const [loggedIn, setloggedIn] = React.useState();
-
-//   const  loggedIn = (data)=>{
-//   storeData = data;
-  
-// }
-
-// console.log('store data ne ? '+storeData)
-
-
-
+  const [loggedIn, setloggedIn] = React.useState(localStorage.getItem("login"));
+  const [user, setUser] = React.useState();
 
   return (
     <div className="App">
        <BrowserRouter>
-     
-      {loggedIn? <Logout/> :   <Item>Please Log In</Item>}
+
+      {loggedIn? <Logout user = {user}/> :<Item>Please Log In</Item>}
       <header className="App-header">
-      
-       <Login_check func={setloggedIn}/>
        <div>
+       
+       <Login_check func={setloggedIn} user = {setUser}/>
+
+  {loggedIn && (    
       <Routes>
-      {/* <Route path="/" element={<Counter />} /> */}
-      <Route path="/counter" element={<Counter />} />
-      <Route path="/api" element={<Login_api />} />
-      <Route path="/timepicker" element={<TimePicker />} />
+        <Route path="/counter" element={<Counter />} />
+        <Route path="/api" element={<Login_api />} />
+        <Route path="/timepicker" element={<TimePicker />} />
       </Routes>
+      )
+    }
         </div>
 
       </header>

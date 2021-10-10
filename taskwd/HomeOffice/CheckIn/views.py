@@ -29,19 +29,27 @@ class CurrentUser(APIView):
     def get(self, request, format=None):
         personalid=int(request.user.id)
         status = PersonalCheck.objects.filter(personal_id=personalid).last()
-        print(status.finish_time)
-        print(int(request.user.id))
-        content = {
-            'user': str(request.user),  # `django.contrib.auth.User` instance.
-            'userid': str(request.user.id),
-            
-            'status' : {
-                'isWorking' : bool(status.isWorking),
-                'lastStart' : str(status.start_time),
-                'lastFinish' : (status.finish_time),
-                'period': status.period
-            }
+        # print('status :{} '.format(status))
+        # print(status.finish_time)
+        # print(int(request.user.id))
+        if status:
+            content = {
+                'user': str(request.user),  # `django.contrib.auth.User` instance.
+                'userid': str(request.user.id),
+                
+                'status' : {
+                    'isWorking' : bool(status.isWorking),
+                    'lastStart' : str(status.start_time),
+                    'lastFinish' : (status.finish_time),
+                    'period': status.period
+                }              
         }
+        else:
+            content ={
+                'user': str(request.user),  # `django.contrib.auth.User` instance.
+                'userid': str(request.user.id),
+
+            }
         return Response(content)
 
 
@@ -73,10 +81,11 @@ class CheckInDetail (APIView):
 
     queryset = PersonalCheck.objects.all()
     serializer_class = PersonalCheckSerializer
+    permission_classes = [permissions.IsAuthenticated,]
 
     def get_object(self, pk):
         try:
-            return PersonalCheck.objects.get(pk=pk)
+            return PersonalCheck.objects.filter(personal_id=pk).last()
         except PersonalCheck.DoesNotExist:
             raise Http404
     
@@ -94,11 +103,19 @@ class CheckInDetail (APIView):
         return Response(serializer.data)
 
 class CheckinViewSet(viewsets.ModelViewSet):
-    queryset = PersonalCheck.objects.all()
+    queryset = PersonalCheck.objects.filter()
     serializer_class = PersonalCheckSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        try:
+            return PersonalCheck.objects.filter(personal_id=self.request.user)
+        except PersonalCheck.DoesNotExist:
+            raise Http404
 
     def post(self,format=None):
-        serializer = PersonalCheckSerializer
+        PersonalCheck = self.get_object()
+        serializer = PersonalCheckSerializer(PersonalCheck)
         return Response(serializer.data)
 
 

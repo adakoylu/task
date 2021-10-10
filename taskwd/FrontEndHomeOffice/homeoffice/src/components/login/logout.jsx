@@ -16,13 +16,23 @@ export const Item = styled(Paper)(({ theme }) => ({
 
 
 
-export default function Logout() {
+ 
+
+export default function Logout(props) {
 const navigate = useNavigate();
+const user = localStorage.getItem('HOuser')
+
+
+console.log("user:  " +user)
 const handleLogout = () =>{
     localStorage.removeItem("accessToken");
     localStorage.removeItem("HOuser")
+    localStorage.removeItem("login")
+
     console.log('handeleClick Log out clicked');
+    navigate("")
     window.location.reload()
+
 }
 
     return (
@@ -32,7 +42,7 @@ const handleLogout = () =>{
                 <Button variant="contained" onClick={()=> navigate('counter')} >Arbeitsstatus</Button>
                 <Button variant="contained" onClick={()=>navigate('timepicker')} >Arbeitszeiten </Button>
                 <Button variant="contained" onClick={handleLogout} >Log out</Button>
-                <Item>Seite für {localStorage.getItem('HOuser')}</Item>
+                <Item>Seite für {props.user}</Item>
             </Stack>
             </Box>
             

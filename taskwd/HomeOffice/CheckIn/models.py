@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 import computed_property
 
@@ -10,7 +11,7 @@ class PersonalCheck (models.Model):
     start_time = models.TimeField()
     finish_time = models.TimeField(null=True)
     period = models.CharField(max_length=300)
-    personal = models.ForeignKey(User, on_delete=models.CASCADE)
+    personal = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     isWorking= models.BooleanField()
     w_hours = computed_property.ComputedCharField(compute_from='hours',max_length=300)
     

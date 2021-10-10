@@ -4,6 +4,17 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import StopIcon from '@mui/icons-material/Stop';
+import axios from 'axios';
+
+const postApi = async(api,data,token) =>  axios.post(api ,data, { headers: {"Authorization" : `Bearer ${token}`} }
+)
+.then(res => {
+console.log(res.data);
+})
+.catch((error) => {
+  console.log(error);
+  localStorage.setItem('login', false);
+})
 
 export default function Counter() {
 //   const [workstarted, setworkstarted] = React.useState(false);
@@ -13,6 +24,11 @@ export default function Counter() {
     workstarted: false,
   
   });
+  const userId = localStorage.getItem("HOuserId");
+  const token = localStorage.getItem("accessToken")
+  const api_entry = "http://127.0.0.1:8000/api-root/checkin//"
+  const api_edit = "http://127.0.0.1:8000/api-root/checkin/"
+ 
 
   function handleStop(){
         const today = new Date();
@@ -28,29 +44,10 @@ export default function Counter() {
         const time =  today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
         setValues({...values, start:time, workstarted:true, stop:''})
         console.log('Start '+time)
-
-
-
-
-
-
-    // axios.post('http://127.0.0.1:8000/login/',{
-    //     username: values.username,
-    //     password: values.password
-    //   })
-    //   .then(function (response) {
-    //     console.log(response);
-    //     localStorage.setItem('accesToken', response.data.access);
-    //     alert('welcome: '+values.username)
-    //   })
-    //   .catch(function (error) {
-    //     console.log('errorumuz' + error);
-    //     alert('login unsuccessfull')
-    //   });
+        postApi( )
 
   }
   
-
   return (
       <div>
     <Box  sx={{ p: 2,  }} >
@@ -79,29 +76,24 @@ export default function Counter() {
 
 
  <Box  sx={{ p: 2, border: '1px dashed grey' }}  >
+  <Stack direction="row" spacing={30}>
+    <Box component="span"
+      sx={{ 
+        width: 100  ,
+        height: 40,
+        alignContent : 'center'
+      }}><p>{values.start}</p> 
+      </Box>
 
-  
-
-<Stack direction="row" spacing={30}>
-<Box component="span"
-  sx={{
-    width: 100  ,
-    height: 40,
-    alignContent : 'center'
-  }}><p>{values.start}</p> 
-   </Box>
-
-   <Box component="span"
-  sx={{
-    width: 100  ,
-    height: 40,
-    alignContent : 'center'
-  }}><p>{values.stop}</p> 
-   </Box>
-</Stack>
-</Box>          
-
-</div>
-    
+      <Box component="span"
+      sx={{
+        width: 100  ,
+        height: 40,
+        alignContent : 'center'
+      }}><p>{values.stop}</p> 
+      </Box>
+    </Stack>
+  </Box>          
+</div>    
   );
 }

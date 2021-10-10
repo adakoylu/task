@@ -17,14 +17,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
         user = UserModel.objects.create_user(
             password=validated_data['password'],
-            email = validated_data['email'],
+            username = validated_data['username'],
         )
 
         return user
 
     class Meta:
         model = User
-        fields = ['url', 'email','password']
+        fields = ['url', 'username','password']
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
