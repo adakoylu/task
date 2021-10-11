@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   sample:
-    container_name: homeoffice_frontend
+    container_name: homeofficeFrontend
     build:
       context: .
       dockerfile: Dockerfile
