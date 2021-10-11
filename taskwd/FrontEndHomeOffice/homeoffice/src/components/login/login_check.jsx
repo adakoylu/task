@@ -13,28 +13,36 @@ props.func(loggedIn)
 props.user(user)
 const location = useLocation();
 
-const api = 'http://127.0.0.1:8000/me/'; 
+const api = 'https://homeoffice.be.aksu.io/me/'; 
 const token = localStorage.getItem('accessToken');
 
 if (token && !loggedIn){
 axios.get(api , { headers: {"Authorization" : `Bearer ${token}`} })
 .then(res => {
-console.log(res.data);
+
 setloggedIn(true);
 setUser(res.data.user)
 localStorage.setItem('HOuser', res.data.user);
 localStorage.setItem('login', true);
 localStorage.setItem('HOuserId', res.data.userid);
+let status = res.data.status
+if (!status){  
+  status = {
+    "isWorking":false,
+    "lastStart":"",
+    "lastFinish":null,
+    "period":""
+}}
+localStorage.setItem('status', JSON.stringify(status))
 
-console.log('Location on login check ' + location.pathname);
+
 if (location.pathname === '/login'){navigate('counter') } 
 
 })
 .catch((error) => {
-  console.log(error);
+
   setloggedIn(false)
   localStorage.setItem('login', false);
-
 
 });
 }

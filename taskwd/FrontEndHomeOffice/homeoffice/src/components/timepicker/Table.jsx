@@ -7,41 +7,35 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-];
 
-export default function AcccessibleTable() {
+export default function DataTable(props) {
+  props.arbeitszeiten && console.log('propdan gelen :'+ props.arbeitszeiten)
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="caption table">
-        <caption>Arbeitzeiten am tag </caption>
+
         <TableHead>
           <TableRow>
-            <TableCell>Arbeitzeiten am tag</TableCell>
+            <TableCell>Arbeitzeiten am tag {props.day}</TableCell>
             <TableCell>Stunde</TableCell>
 
 
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
+          {props.arbeitszeiten && props.arbeitszeiten.map((row) => (
+            <TableRow key={row.id}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {row.w_hours}
+
               </TableCell>
 
             </TableRow>
           ))}
              <TableRow>
-            <TableCell >Total</TableCell>
-            <TableCell>8h 10m</TableCell>
+
 
 
           </TableRow>

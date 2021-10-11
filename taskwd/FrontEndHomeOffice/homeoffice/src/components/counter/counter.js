@@ -13,38 +13,69 @@ console.log(res.data);
 })
 .catch((error) => {
   console.log(error);
-  localStorage.setItem('login', false);
+  
 })
 
-export default function Counter() {
-//   const [workstarted, setworkstarted] = React.useState(false);
-  const [values, setValues] = React.useState({
-    start: '',
-    stop: '',
-    workstarted: false,
+const putApi = async(api,data,token) =>  axios.put(api ,data, { headers: {"Authorization" : `Bearer ${token}`} }
+)
+.then(res => {
+console.log(res.data);
+})
+.catch((error) => {
+  console.log(error);
   
+})
+
+const getTime = () => {
+  const today = new Date();
+  const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  return time
+}
+
+export default function Counter() {
+
+let status = JSON.parse(localStorage.getItem('status'));
+
+  const [values, setValues] = React.useState({
+    start: status.isWorking? status.lastStart : '',
+    stop: '',
+    workstarted: status.isWorking,
+    
   });
   const userId = localStorage.getItem("HOuserId");
-  const token = localStorage.getItem("accessToken")
-  const api_entry = "http://127.0.0.1:8000/api-root/checkin//"
-  const api_edit = "http://127.0.0.1:8000/api-root/checkin/"
- 
-
+  const token = localStorage.getItem("accessToken");
+  const api_entry = "https://homeoffice.be.aksu.io/api-root/day/" ;
+  const api_edit = (id) => `https://homeoffice.be.aksu.io/CheckIn/${id}/`;
   function handleStop(){
-        const today = new Date();
-        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        setValues({...values, stop:time, workstarted:false})
-        console.log('Stop '+time)
-
+        const time = getTime();
+        const today =  new Date();
+        setValues({...values, stop:time, workstarted:false});
+        console.log('Stop '+time);
+        const data = {
+          "personal": userId,
+          "start_time": values.start,
+          "finish_time": time,
+          "day": today.toJSON().slice(0, 10),
+          "isWorking": false
+      };
+        putApi(api_edit(userId),data,token)
   }
 
    function handleStart() {
         // workstarted? setworkstarted(false):setworkstarted(true);
         const today =  new Date();
-        const time =  today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        const time = getTime();
         setValues({...values, start:time, workstarted:true, stop:''})
-        console.log('Start '+time)
-        postApi( )
+        console.log('Start '+time);
+        const data = {
+          "personal": userId,
+          "start_time": time,
+          "finish_time": null,
+          "day": today.toJSON().slice(0, 10),
+          "isWorking": true
+      };
+      console.log(data);
+      postApi(api_entry,data,token);
 
   }
   

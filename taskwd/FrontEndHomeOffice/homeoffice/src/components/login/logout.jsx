@@ -25,9 +25,8 @@ const user = localStorage.getItem('HOuser')
 
 console.log("user:  " +user)
 const handleLogout = () =>{
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("HOuser")
-    localStorage.removeItem("login")
+
+    localStorage.clear();
 
     console.log('handeleClick Log out clicked');
     navigate("")
