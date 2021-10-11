@@ -24,6 +24,8 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'day', views.CheckInDateFilter)
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-root/', include(router.urls)),
