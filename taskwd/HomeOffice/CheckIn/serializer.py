@@ -35,10 +35,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class PersonalCheckSerializer (serializers.ModelSerializer):
     class Meta:
         model=  PersonalCheck
-        fields = ["id","personal", "start_time","finish_time","w_hours","day","isWorking"]
+        fields = ["id","personal","w_hours","isWorking","day","start_time","finish_time"]
         read_only_fields = ["w_hours","id",]
-
-
 
 
 class TokenSerializer(TokenObtainPairSerializer):

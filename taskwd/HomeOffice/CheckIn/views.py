@@ -1,9 +1,7 @@
-import datetime
 from django.shortcuts import render
 
-# Create your views here.
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets,generics,status
+from rest_framework import viewsets,status
 from rest_framework import views
 from rest_framework.views import APIView
 from rest_framework import permissions
@@ -12,11 +10,8 @@ from .models import PersonalCheck
 from rest_framework.response import Response
 from django.http import Http404
 from rest_framework.decorators import api_view
-import json
-
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 class TokenObtainView(TokenObtainPairView):
     permission_classes = (AllowAny,)
@@ -29,12 +24,10 @@ class CurrentUser(APIView):
     def get(self, request, format=None):
         personalid=int(request.user.id)
         status = PersonalCheck.objects.filter(personal_id=personalid).last()
-        # print('status :{} '.format(status))
-        # print(status.finish_time)
-        # print(int(request.user.id))
+
         if status:
             content = {
-                'user': str(request.user),  # `django.contrib.auth.User` instance.
+                'user': str(request.user),  
                 'userid': str(request.user.id),
                 
                 'status' : {
@@ -46,13 +39,11 @@ class CurrentUser(APIView):
         }
         else:
             content ={
-                'user': str(request.user),  # `django.contrib.auth.User` instance.
+                'user': str(request.user), 
                 'userid': str(request.user.id),
 
             }
         return Response(content)
-
-
 
 class UserViewSet(viewsets.ModelViewSet):
    
@@ -67,9 +58,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return self.request.user
 
         return super(UserViewSet, self).get_object()
-
-    
-
 
 class GroupViewSet(viewsets.ModelViewSet):
     
@@ -102,21 +90,26 @@ class CheckInDetail (APIView):
         serializer = PersonalCheckSerializer(PersonalCheck)
         return Response(serializer.data)
 
-class CheckinViewSet(viewsets.ModelViewSet):
-    queryset = PersonalCheck.objects.filter()
+
+class CheckInDateFilter(viewsets.ModelViewSet):
+    queryset = PersonalCheck.objects.all()
     serializer_class = PersonalCheckSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,]
 
-    def get_object(self):
-        try:
-            return PersonalCheck.objects.filter(personal_id=self.request.user)
-        except PersonalCheck.DoesNotExist:
-            raise Http404
+    def get_queryset(self):
+        user = self.request.user
+        # print(user)
+        return PersonalCheck.objects.filter(personal_id = user)
 
-    def post(self,format=None):
-        PersonalCheck = self.get_object()
-        serializer = PersonalCheckSerializer(PersonalCheck)
+
+    def retrieve(self,request, format=None, *args, **kwargs):
+        params = kwargs
+        print(params['pk'])
+        checkins = PersonalCheck.objects.filter(day = params['pk']).filter(personal_id =request.user)
+        serializer = PersonalCheckSerializer(checkins, many=True)
+       
         return Response(serializer.data)
+
 
 
 
